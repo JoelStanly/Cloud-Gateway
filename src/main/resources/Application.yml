@@ -1,0 +1,33 @@
+server:
+   port: 9191
+
+spring:
+   application:
+      name: API-GATEWAY
+   cloud:
+      gateway:
+         routes:
+         -  id: SENSOR-DATA
+            uri: lb://SENSOR-DATA
+            predicates:
+            - Path=/sensorData/**
+            filters:
+            -  name: CircuitBreaker
+               args:
+                  name: SENSOR-DATA
+                  fallbackuri: forward:/sensorDataServiceFallBack
+         -  id: SENSOR-PLOT
+            uri: lb://SENSOR-PLOT
+            predicates:
+            - Path=/SensorPlot/**
+            filters:
+            -  name: CircuitBreaker
+               args:
+                  name: SENSOR-PLOT
+                  fallbackuri: forward:/sensorPlotServiceFallBack
+         globalcors:
+            cors-configurations:
+               '[/**]':
+                  allowedOrigins: '*'
+                  allowedMethods: '*'
+                  allowedHeaders: '*'
